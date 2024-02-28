@@ -1,0 +1,6 @@
+/docker/mssql/data/*
+/docker/mssql/log/*
+/docker/mssql/secrets/*
+/bin/
+/obj/
+/.idea/
