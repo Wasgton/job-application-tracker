@@ -2,20 +2,24 @@ using JobApplicationTracker.Application.Dto;
 using JobApplicationTracker.Application.Exception;
 using JobApplicationTracker.Domain.Entity.Job;
 using JobApplicationTracker.domain.repository;
-using JobApplicationTracker.infra.database.Sqlserver;
 using Microsoft.OpenApi.Extensions;
 
 namespace JobApplicationTracker.Application.UseCases;
 
-public class UpdateJobUseCase(IJobRepository? repository = null)
+public class UpdateJobUseCase
 {
-    private readonly IJobRepository _repository = repository?? new MssqlDapperJobRepository();
+    private readonly IJobRepository _repository;
+
+    public UpdateJobUseCase(IJobRepository repository)
+    {
+        _repository = repository;
+    }
 
     public JobOutput Execute(string id, JobInput newJobData)
     {
-        Job? jobDb = _repository.GetById(id);
+        var jobDb = _repository.GetById(id);
         if (jobDb == null) throw new NotFoundException("Job not found");
-        Job jobToUpdate = new Job(
+        var jobToUpdate = new Job(
             newJobData.Url,
             newJobData.ApplicationDate,
             newJobData.Role,
@@ -31,7 +35,7 @@ public class UpdateJobUseCase(IJobRepository? repository = null)
         );
         _repository.Update(jobToUpdate);
 
-        Job? result = _repository.GetById(id);
+        var result = _repository.GetById(id);
         if (jobDb == null) throw new NotFoundException("Job not found");
         return new JobOutput
         {
@@ -50,5 +54,4 @@ public class UpdateJobUseCase(IJobRepository? repository = null)
             DeletedAt = result.DeletedAt
         };
     }
-    
 }

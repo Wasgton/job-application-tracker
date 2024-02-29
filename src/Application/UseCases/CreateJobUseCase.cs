@@ -1,20 +1,17 @@
-
 using JobApplicationTracker.Application.Dto;
 using JobApplicationTracker.Domain.Entity.Job;
-using JobApplicationTracker.Domain.Enum;
 using JobApplicationTracker.domain.repository;
-using JobApplicationTracker.infra.database.Sqlserver;
 using Microsoft.OpenApi.Extensions;
 
 namespace JobApplicationTracker.Application.UseCases;
 
-public class CreateJobUseCase(IJobRepository? repository = null)
+public class CreateJobUseCase(IJobRepository repository)
 {
-    private IJobRepository _repository = repository?? new MssqlDapperJobRepository();
+    private readonly IJobRepository _repository = repository;
 
     public JobOutput Execute(JobInput jobData)
     {
-        Job newJob = new Job(
+        var newJob = new Job(
             jobData.Url,
             jobData.ApplicationDate,
             jobData.Role,
@@ -26,9 +23,10 @@ public class CreateJobUseCase(IJobRepository? repository = null)
             jobData.ResponseStatus,
             jobData.ResponseDate
         );
-        Guid id = _repository.Create(newJob);
+        var id = _repository.Create(newJob);
         var output = _repository.GetById(id.ToString());
-        return new JobOutput{
+        return new JobOutput
+        {
             Id = id.ToString(),
             Url = output.Url,
             ApplicationDate = output.ApplicationDate,
@@ -44,5 +42,4 @@ public class CreateJobUseCase(IJobRepository? repository = null)
             DeletedAt = output.DeletedAt
         };
     }
-    
 }

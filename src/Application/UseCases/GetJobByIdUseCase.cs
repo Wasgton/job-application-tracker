@@ -1,14 +1,18 @@
 using JobApplicationTracker.Application.Dto;
 using JobApplicationTracker.Application.Exception;
 using JobApplicationTracker.domain.repository;
-using JobApplicationTracker.infra.database.Sqlserver;
 using Microsoft.OpenApi.Extensions;
 
 namespace JobApplicationTracker.Application.UseCases;
 
-public class GetJobByIdUseCase(IJobRepository? repository = null)
+public class GetJobByIdUseCase
 {
-    private readonly IJobRepository _repository = repository ?? new MssqlDapperJobRepository();
+    private readonly IJobRepository _repository;
+
+    public GetJobByIdUseCase(IJobRepository repository)
+    {
+        _repository = repository;
+    }
 
     public JobOutput Execute(string id)
     {
@@ -31,5 +35,4 @@ public class GetJobByIdUseCase(IJobRepository? repository = null)
             DeletedAt = result.DeletedAt
         };
     }
-    
 }
