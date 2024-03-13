@@ -1,4 +1,5 @@
-using JobApplicationTracker.Domain.Entity.Job;
+
+using JobApplicationTracker.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace JobApplicationTracker.Infra.Database.Contexts;
@@ -10,12 +11,16 @@ public class EntityDbContext : Context
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         string connectionString = GetConnectionString();
-        optionsBuilder.UseSqlServer(connectionString,options=>options.EnableRetryOnFailure());
+        optionsBuilder
+            .UseSqlServer(connectionString,options=>options.EnableRetryOnFailure())
+            .EnableSensitiveDataLogging()
+            .LogTo(Console.WriteLine);
     }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Job>().ToTable("Job");
+        base.OnModelCreating(modelBuilder);
     }
     
 } 

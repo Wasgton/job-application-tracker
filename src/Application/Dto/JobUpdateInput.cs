@@ -1,8 +1,12 @@
 using System.ComponentModel.DataAnnotations;
 using JobApplicationTracker.Domain.Enum;
+
 namespace JobApplicationTracker.Application.Dto;
-public class JobInput
+
+public class JobUpdateInput
 {
+    [Required] 
+    public string Id { get; set; }
     [Required]
     public string Url { get; set; } = string.Empty;
     [Required]

@@ -1,44 +1,51 @@
-using System.Collections;
 using System.Text.Json;
-using JobApplicationTracker.Domain.Entity.Job;
-using JobApplicationTracker.domain.repository;
+using JobApplicationTracker.Application.Repository;
+using JobApplicationTracker.Domain.Entities;
 
 namespace JobApplicationTracker.Infra.Database.JsonFile;
 
 public class JsonFileJobRepository : IJobRepository
 {
-    private string _jsonFile = "db.json";
-    private JsonSerializerOptions _options = new();
-    
+    private readonly string _jsonFile = "db.json";
+    private readonly JsonSerializerOptions _options = new();
+
     public JsonFileJobRepository()
     {
-       _options.PropertyNameCaseInsensitive = true;
+        _options.PropertyNameCaseInsensitive = true;
     }
-    
+
     public List<Job> GetAll()
     {
-        string json = File.ReadAllText(_jsonFile);
-        IEnumerable<Job>? jobs = JsonSerializer.Deserialize<IEnumerable<Job>>(json, _options);
+        var json = File.ReadAllText(_jsonFile);
+        var jobs = JsonSerializer.Deserialize<IEnumerable<Job>>(json, _options);
         if (jobs == null) return new List<Job>();
-        return jobs.ToList(); 
+        return jobs.ToList();
     }
 
     public Job? GetById(string id)
     {
-        List<Job> jobs = GetAll();
-        Guid idGuid = Guid.Parse(id);
-        Job? job = jobs.FirstOrDefault(x => x.Id == idGuid);
+        var jobs = GetAll();
+        var idGuid = Guid.Parse(id);
+        var job = jobs.Where(x=> x.DeletedAt == null).FirstOrDefault(x => x.Id == idGuid);
         return job;
     }
     
+    public Job? GetDeletedById(string id)
+    {
+        var jobs = GetAll();
+        var idGuid = Guid.Parse(id);
+        var job = jobs.Where(x=> x.DeletedAt != null).FirstOrDefault(x => x.Id == idGuid);
+        return job;
+    }
+
     public Guid Create(Job job)
     {
-        List<Job> jobs = GetAll();
+        var jobs = GetAll();
         job.GenerateId();
         jobs.Add(job);
-        string jobsSerialized = JsonSerializer.Serialize(jobs);
+        var jobsSerialized = JsonSerializer.Serialize(jobs);
         File.WriteAllText(_jsonFile, jobsSerialized);
-        return (Guid) job.Id!;
+        return (Guid)job.Id!;
     }
 
     public void Update(Job job)
@@ -48,9 +55,15 @@ public class JsonFileJobRepository : IJobRepository
 
     public void Delete(Job job)
     {
-        List<Job> jobs = GetAll();
-        List<Job> newJobs = jobs.Where(x => x.Id != job.Id).ToList();
-        string jobsSerialized = JsonSerializer.Serialize(newJobs);
+        var jobs = GetAll();
+        var newJobs = jobs.Where(x => x.Id != job.Id).ToList();
+        var jobsSerialized = JsonSerializer.Serialize(newJobs);
         File.WriteAllText(_jsonFile, jobsSerialized);
+    }
+
+    public List<Job> GetAllDeleted()
+    {
+        var jobs = GetAll();
+        return jobs.Where(x => x.DeletedAt != null).ToList();
     }
 }

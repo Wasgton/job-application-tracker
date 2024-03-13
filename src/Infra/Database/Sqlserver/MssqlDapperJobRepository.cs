@@ -1,11 +1,10 @@
 using System.Data;
 using Dapper;
 using JobApplicationTracker.Application.Exception;
-using JobApplicationTracker.Domain.Entity.Job;
+using JobApplicationTracker.Application.Repository;
+using JobApplicationTracker.Domain.Entities;
 using JobApplicationTracker.Domain.Enum;
-using JobApplicationTracker.domain.repository;
 using JobApplicationTracker.Infra.Database.Contexts;
-using Microsoft.IdentityModel.Tokens;
 
 namespace JobApplicationTracker.infra.database.Sqlserver;
 
@@ -16,16 +15,16 @@ public class MssqlDapperJobRepository : IJobRepository
     public List<Job> GetAll()
     {
         var result = _connection.Query("SELECT * FROM Job WHERE deleted_at is null");
-        List<Job> jobs = new List<Job>();
+        var jobs = new List<Job>();
         foreach (var data in result)
         {
-            Job job = new Job(
+            var job = new Job(
                 url: data.url,
                 applicationDate: data.application_date,
                 role: data.role,
                 requirements: data.requirements,
                 benefits: data.benefits,
-                status: (JobStatusEnum) data.status,
+                status: (JobStatusEnum)data.tatus,
                 company: data.company,
                 salary: data.salary,
                 responseStatus: data.response_status,
@@ -36,6 +35,7 @@ public class MssqlDapperJobRepository : IJobRepository
             );
             jobs.Add(job);
         }
+
         return jobs;
     }
 
@@ -44,21 +44,45 @@ public class MssqlDapperJobRepository : IJobRepository
         var parameters = new DynamicParameters();
         parameters.Add("@id", id);
         var result = _connection.QuerySingle("SELECT * FROM Job WHERE deleted_at is null AND id = @id", parameters);
-        if(result == null) throw new NotFoundException("Job not found");
+        if (result == null) throw new NotFoundException("Job not found");
         return new Job(
             result.url,
             result.application_date,
             result.role,
             result.requirements,
             result.benefits,
-            (JobStatusEnum) result.status,
+            (JobStatusEnum)result.status,
             result.company,
             result.salary,
             result.response_status,
             result.response_date,
             result.archived,
             result.id,
-            result.deleted_at 
+            result.deleted_at
+        );
+    }
+
+
+    public Job GetDeletedById(string id)
+    {
+        var parameters = new DynamicParameters();
+        parameters.Add("@id", id);
+        var result = _connection.QuerySingle("SELECT * FROM Job WHERE deleted_at is null AND id = @id", parameters);
+        if (result == null) throw new NotFoundException("Job not found");
+        return new Job(
+            result.url,
+            result.application_date,
+            result.role,
+            result.requirements,
+            result.benefits,
+            (JobStatusEnum)result.status,
+            result.company,
+            result.salary,
+            result.response_status,
+            result.response_date,
+            result.archived,
+            result.id,
+            result.deleted_at
         );
     }
 
@@ -74,16 +98,16 @@ public class MssqlDapperJobRepository : IJobRepository
         parameters.Add("@Salary", job.Salary);
         parameters.Add("@ResponseStatus", job.ResponseStatus);
         parameters.Add("@ResponseDate", job.ResponseDate);
-        parameters.Add("@Status", job.status);
-        parameters.Add("@Archived", job.Archived??false);
+        parameters.Add("@Status", job.Status);
+        parameters.Add("@Archived", job.Archived ?? false);
         parameters.Add("@DeletedAt", job.DeletedAt);
-        
+
         return _connection.QuerySingle<Guid>(@"
             INSERT INTO Job (url,application_date,role,requirements,benefits,company,salary,response_status,response_date,status,archived,deleted_at)
             OUTPUT INSERTED.Id
             VALUES (@Url,@ApplicationDate,@Role,@Requirements,@Benefits,@Company,@Salary,@ResponseStatus,@ResponseDate,@Status,@Archived,@DeletedAt);
             SELECT SCOPE_IDENTITY();"
-            ,parameters);
+            , parameters);
     }
 
     public void Update(Job job)
@@ -98,13 +122,13 @@ public class MssqlDapperJobRepository : IJobRepository
         parameters.Add("@Salary", job.Salary);
         parameters.Add("@ResponseStatus", job.ResponseStatus);
         parameters.Add("@ResponseDate", job.ResponseDate);
-        parameters.Add("@Status", job.status);
-        parameters.Add("@Archived", job.Archived??false);
+        parameters.Add("@Status", job.Status);
+        parameters.Add("@Archived", job.Archived ?? false);
         parameters.Add("@DeletedAt", job.DeletedAt);
         parameters.Add("@Id", job.Id);
-        
+
         _connection.Execute(@"
-            UPDATE Job 
+            UPDATE Job
             SET
                 url = @Url,
                 application_date = @ApplicationDate,
@@ -132,4 +156,30 @@ public class MssqlDapperJobRepository : IJobRepository
         _connection.Execute("UPDATE Job SET deleted_at = GETDATE() WHERE id = @id", parameters);
     }
 
+    public List<Job> GetAllDeleted()
+    {
+        var result = _connection.Query("SELECT * FROM Job WHERE deleted_at is not null");
+        var jobs = new List<Job>();
+        foreach (var data in result)
+        {
+            var job = new Job(
+                url: data.url,
+                applicationDate: data.application_date,
+                role: data.role,
+                requirements: data.requirements,
+                benefits: data.benefits,
+                status: (JobStatusEnum)data.tatus,
+                company: data.company,
+                salary: data.salary,
+                responseStatus: data.response_status,
+                responseDate: data.response_date,
+                archived: data.archived,
+                id: data.id,
+                deletedAt: data.deleted_at
+            );
+            jobs.Add(job);
+        }
+
+        return jobs;
+    }
 }

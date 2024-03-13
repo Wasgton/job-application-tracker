@@ -1,5 +1,5 @@
-using JobApplicationTracker.Domain.Entity.Job;
-using JobApplicationTracker.domain.repository;
+using JobApplicationTracker.Application.Repository;
+using JobApplicationTracker.Domain.Entities;
 using JobApplicationTracker.Infra.Database.Contexts;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,8 +7,8 @@ namespace JobApplicationTracker.infra.database.Sqlserver;
 
 public class MssqlEntityJobRepository : IJobRepository
 {
-    private readonly DbContext _context = new EntityDbContext();
-    
+    private readonly EntityDbContext _context = new();
+
     public List<Job> GetAll()
     {
         return _context.Set<Job>().ToList();
@@ -16,14 +16,23 @@ public class MssqlEntityJobRepository : IJobRepository
 
     public Job? GetById(string id)
     {
-        return _context.Find<Job>(id);
+        return _context.Jobs!
+            .Where(x => x.DeletedAt == null)
+            .First(x => x.Id == Guid.Parse(id));
+    }
+
+    public Job? GetDeletedById(string id)
+    {
+        return _context.Jobs!
+            .Where(x => x.DeletedAt != null)
+            .First(x => x.Id == Guid.Parse(id));
     }
 
     public Guid Create(Job job)
     {
-        _context.Add(job);
+        _context.Jobs!.Add(job);
         _context.SaveChanges();
-        if(!job.Id.HasValue) throw new Exception("Job not found");
+        if (!job.Id.HasValue) throw new Exception("Job not found");
         return job.Id.Value;
     }
 
@@ -40,4 +49,9 @@ public class MssqlEntityJobRepository : IJobRepository
         _context.SaveChanges();
     }
 
+    public List<Job> GetAllDeleted()
+    {
+        return _context.Jobs!
+            .Where(job =>  job.DeletedAt != null ).ToList();
+    }
 }

@@ -1,6 +1,6 @@
-using JobApplicationTracker.Domain.Entity.Job;
+using JobApplicationTracker.Domain.Entities;
 
-namespace JobApplicationTracker.domain.repository;
+namespace JobApplicationTracker.Application.Repository;
 
 public interface IJobRepository
 {
@@ -9,4 +9,6 @@ public interface IJobRepository
     public Guid Create(Job job);
     public void Update(Job job);
     public void Delete(Job job);
+    public Job? GetDeletedById(string id);
+    public List<Job> GetAllDeleted();
 }

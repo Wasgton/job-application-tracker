@@ -1,7 +1,7 @@
 using JobApplicationTracker.Application.Exception;
-using JobApplicationTracker.domain.repository;
+using JobApplicationTracker.Application.Repository;
 
-namespace JobApplicationTracker.Application.UseCases;
+namespace JobApplicationTracker.Application.UseCases.JobUseCases;
 
 public class ArchiveJobUseCase(IJobRepository repository)
 {
