@@ -5,6 +5,6 @@ public class Log
     public static void info(string message)
     {
         string messageToAppend = @$"Trace: {message}";
-        File.AppendAllText("./src/logs/log.txt", $"{messageToAppend}\n");
+        File.AppendAllText("./src/logs/log.txt", $"\n {messageToAppend}\n");
     }
 }
