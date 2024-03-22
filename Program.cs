@@ -1,4 +1,5 @@
 using JobApplicationTracker.Application.Repository;
+using JobApplicationTracker.Application.UseCases.UserUseCases;
 using JobApplicationTracker.infra.database.Sqlserver;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,6 +16,9 @@ builder.Services.AddCors(options =>
     });
 });
 builder.Services.AddScoped<IJobRepository, MssqlEntityJobRepository>();
+builder.Services.AddScoped<IUserRepository, MssqlEntityUserRepository>();
+builder.Services.AddScoped<IRegisterUserUseCase, RegisterUserUseCase>();
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
