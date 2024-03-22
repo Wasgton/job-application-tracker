@@ -7,6 +7,7 @@ namespace JobApplicationTracker.Infra.Database.Contexts;
 public class EntityDbContext : Context
 {
     public DbSet<Job>? Jobs { get; set; }
+    public DbSet<User>? Users { get; set; }
     
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -19,8 +20,9 @@ public class EntityDbContext : Context
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Job>().ToTable("Job");
+        modelBuilder.Entity<Job>().ToTable("job");
+        modelBuilder.Entity<User>().ToTable("user");
         base.OnModelCreating(modelBuilder);
     }
-    
+
 } 

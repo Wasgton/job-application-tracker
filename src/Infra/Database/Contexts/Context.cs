@@ -5,16 +5,15 @@ namespace JobApplicationTracker.Infra.Database.Contexts;
 
 public abstract class Context : DbContext
 {
-    protected IConfiguration GetConfig()
-    {
-        return new ConfigurationBuilder()
-            .AddJsonFile("appsettings.json")
-            .Build();
-    }
+    protected ConfigurationBuilder ConfigurationBuilder = new();
     
     protected string GetConnectionString()
     {
-        var section = GetConfig().GetSection("Settings");
+        var section = ConfigurationBuilder
+            .AddJsonFile("appsettings.json")
+            .Build()
+            .GetSection("Settings");
+        
         return $"Server={section["Server"]},{section["Port"]};" +
                $"Database={section["Database"]};" +
                $"User ID={section["User"]};" +
