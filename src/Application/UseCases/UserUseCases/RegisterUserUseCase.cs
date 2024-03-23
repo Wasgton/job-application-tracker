@@ -20,12 +20,12 @@ public class RegisterUserUseCase : IRegisterUserUseCase
     private IMapper _mapper;
     private int _iterations = 3;
     private string _salt = Password.GenerateSalt();
-    private string? pepper;
+    private string? _pepper;
 
     public RegisterUserUseCase(IUserRepository repository, IConfiguration configuration)
     {
         _repository = repository;
-        pepper = configuration.GetSection("PasswordPepper").Value;
+        _pepper = configuration.GetSection("AppSettings")["PasswordPepper"];
         var config = new MapperConfiguration(cfg => { cfg.AddProfile<UserProfile>(); });
         _mapper = config.CreateMapper();
     }
@@ -35,10 +35,9 @@ public class RegisterUserUseCase : IRegisterUserUseCase
         if (input.Password != input.ConfirmPassword)
             throw new ArgumentException("Password and confirmation doesn't match!");
         var userDb = _repository.GetByUserName(input.Username);
-        System.Diagnostics.Debug.WriteLine(userDb);
         if (userDb != null)
             throw new AlreadyRegisteredException("User already exists");
-        input.Password = Password.ComputeHash(input.Password, _salt, pepper!, _iterations);
+        input.Password = Password.ComputeHash(input.Password, _salt, _pepper!, _iterations);
         User userInput = _mapper.Map<User>(input);
         userInput.Salt = _salt;
         Guid id = _repository.Create(userInput);

@@ -23,7 +23,7 @@ public class LoginUseCase : ILoginUserUseCase
     public LoginUseCase(IUserRepository repository, IConfiguration configuration)
     {
         _repository = repository;
-        _pepper = configuration.GetSection("PasswordPepper").Value;
+        _pepper = configuration.GetSection("AppSettings")["PasswordPepper"];
         var config = new MapperConfiguration(cfg => { cfg.AddProfile<UserProfile>(); });
         _mapper = config.CreateMapper();
     }
