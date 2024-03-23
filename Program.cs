@@ -18,6 +18,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddScoped<IJobRepository, MssqlEntityJobRepository>();
 builder.Services.AddScoped<IUserRepository, MssqlEntityUserRepository>();
 builder.Services.AddScoped<IRegisterUserUseCase, RegisterUserUseCase>();
+builder.Services.AddScoped<ILoginUserUseCase, LoginUseCase>();
 
 var app = builder.Build();
 

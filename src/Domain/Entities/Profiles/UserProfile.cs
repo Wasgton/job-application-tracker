@@ -9,9 +9,11 @@ public class UserProfile : Profile
     {
         CreateMap<User, LoginInput>();
         CreateMap<LoginInput, User>();
+        CreateMap<User, LoginOutput>();
         CreateMap<RegisterInput, User>().ForMember(
             dest=>dest.Hash, 
-            option => option.MapFrom(src => src.Password));
+            option => option.MapFrom(src => src.Password)
+            );
         CreateMap<User, RegisterOutput>();
     }
 }
