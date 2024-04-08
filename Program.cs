@@ -23,6 +23,7 @@ builder.Services.AddScoped<IJobRepository, MssqlEntityJobRepository>();
 builder.Services.AddScoped<IUserRepository, MssqlEntityUserRepository>();
 builder.Services.AddScoped<IRegisterUserUseCase, RegisterUserUseCase>();
 builder.Services.AddScoped<ILoginUserUseCase, LoginUseCase>();
+builder.Services.AddScoped<ICreateTokenUseCase, CreateTokenUseCase>();
 //JWT CONFIGURATION
 var jwtIssuer = builder.Configuration.GetSection("Jwt:Issuer").Get<string>();
 var jwtKey = builder.Configuration.GetSection("Jwt:Key").Get<string>();
