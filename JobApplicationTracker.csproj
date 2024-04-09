@@ -10,6 +10,8 @@
 
     <ItemGroup>
         <PackageReference Include="automapper" Version="13.0.1" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.4" />
+        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.5.1" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.1" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
         <PackageReference Include="Dapper" Version="2.1.28" />
@@ -17,8 +19,7 @@
         <PackageReference Include="microsoft.entityFrameworkCore.sqlServer" Version="8.0.2" />
         <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
-        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.0" />
-        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.15.0" />
+        
     </ItemGroup>
 
     <ItemGroup>

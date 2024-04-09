@@ -24,6 +24,7 @@ public class AuthController : ControllerBase
         _createTokenUseCase = createTokenUseCase;
     }
 
+    [HttpPost("/create-token")]
     public IActionResult CreateToken(LoginInput input)
     {
         try
