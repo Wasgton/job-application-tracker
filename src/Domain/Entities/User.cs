@@ -14,7 +14,7 @@ public class User
     [Column("salt")]
     public string? Salt { get; set; }
 
-    public User(){}
+    private User(){}
     public User(string username, string hash, string? salt)
     {
         Username = username;
@@ -23,7 +23,7 @@ public class User
         Validation();
     }
     
-    public void Validation()
+    private void Validation()
     {
         if (string.IsNullOrEmpty(Username)) throw new ValidationException("Username is required");
         if (string.IsNullOrEmpty(Hash)) throw new ValidationException("Password is required");
