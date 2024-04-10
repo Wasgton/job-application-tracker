@@ -2,7 +2,6 @@ using JobApplicationTracker.Application.Exception;
 using JobApplicationTracker.Application.Repository;
 using JobApplicationTracker.Domain.Entities;
 using JobApplicationTracker.Infra.Database.Contexts;
-using Microsoft.EntityFrameworkCore;
 
 namespace JobApplicationTracker.infra.database.Sqlserver;
 

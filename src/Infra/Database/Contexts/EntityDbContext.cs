@@ -20,8 +20,8 @@ public class EntityDbContext : Context
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Job>().ToTable("job");
         modelBuilder.Entity<User>().ToTable("user");
+        modelBuilder.Entity<Job>().ToTable("job");
         base.OnModelCreating(modelBuilder);
     }
 
