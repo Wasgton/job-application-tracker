@@ -1,7 +1,7 @@
 # Job Application Tracker
 
-### Project made to apply in practice C#, .NET, Entity Framework and Clean Archtecture.
+### Project made to put in practice C#, .NET, Entity Framework and Clean Archtecture.
 
-The idea is, create a simple API to register the jobs that the user applied during a job hunting process 
-and track the companies that answered, when was it, what was the answer etc.
+The idea is to create a simple API for registering the jobs that the user applied to during a job hunting process, 
+and to track the companies that responded, along with the date and the nature of the response.
 
